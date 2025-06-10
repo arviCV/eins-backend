@@ -20,16 +20,3 @@ To set up a Unix-based OS  or Ubuntu/macOS recommended for backend development.
 clone the repository using git bash
 we have to install the necessary libraries for backend login dependencies.
 Install the testing tools and configure package Json.
-
-
-
-
-
-
-
-
-
-
-
-
-
