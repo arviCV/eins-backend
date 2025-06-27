@@ -6,6 +6,6 @@ URL_DATABASE = "postgresql+psycopg2://postgres:RA07@localhost:5432/endpoint"
 
 engine= create_engine(URL_DATABASE)
 
-SessionLocal =sessionmaker(autocome=False, autoflush=False, bind=engine)
+SessionLocal =sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
