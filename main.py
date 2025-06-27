@@ -28,14 +28,14 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 @app.get("/questions/{question_id}")
-async def read_question(question_id: int):
-    result =db.query(models.questions).filter(models.Questions.id == question_id).first()
+async def read_question(question_id: int, db: db_dependency):
+    result =db.query(models.Questions).filter(models.Questions.id == question_id).first()
     if not result:
         raise HTTPException(status_code=404, detail='Question is not found')
     return result
 
 @app.get("/choices/{question_id}")
-async def read_choices(question_id:int):
+async def read_choices(question_id:int, db:db_dependency):
     result = db.query(models.Choices).filter(models.Choices.question_id == question_id).all()
     if not result:
         raise HTTPException(status_code=404, detail='Choices is not found')
