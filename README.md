@@ -30,4 +30,4 @@ We have create the endpoints for signup,login,logout and current user
 We have to  create a new user and form fields username and password for sign up
 To authenticates the user and set a cookie session for the client for login
 Log out and clears the session cookie 
-Returns the current logged-in user info 
+Returns the current logged-in user information
