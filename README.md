@@ -66,4 +66,4 @@ Design and documentation for logout process
        6.The 401 unauthorized defines the user is not logged in or user's session is missing,expired or invaid
        7.To fix the 401 error login first and store the session    
        8.By removing the session cookie from the client’s browser, any subsequent access to protected endpoints will be denied until the user logs in again and logging the user out
-       9.After deleting the cookie  return a successful response message
+       9`.After deleting the cookie  return a successful response message
