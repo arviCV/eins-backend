@@ -1,20 +1,17 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, status
 from pydantic import BaseModel
-from typing import List, Annotated
-import models
+import model
 from database import engine, SessionLocal
+from typing import List, Annotated
 from sqlalchemy.orm import Session
+import auth
+from auth import get_current_user
+
 
 app = FastAPI()
-models.Base.metadata.create_all(bind=engine)
+app.include_router(auth.router)
 
-class ChoiceBase(BaseModel):
-    choice_text:str
-    is_correct:bool
-
-class QuestionBase(BaseModel):
-    question_text:str
-    choices:List[ChoiceBase]
+model.Base.metadata.create_all(bind=engine)
 
 def get_db():
     db = SessionLocal()
@@ -25,24 +22,41 @@ def get_db():
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
+user_dependency = Annotated[dict, Depends(get_current_user)]
+
+
+@app.get("/", status_code=status.HTTP_200_OK)
+async def user(user: user_dependency, db: db_dependency):
+    if user is None:
+        raise HTTPException(status_code=401, detail='Authentication Failed')
+    return {"User": user}
+
+
+class ChoiceBase(BaseModel):
+    choice_text:str
+    is_correct:bool
+
+class QuestionBase(BaseModel):
+    question_text:str
+    choices:List[ChoiceBase]
 
 
 @app.get("/questions/{question_id}")
-async def read_question(question_id: int, db: db_dependency):
-    result =db.query(models.Questions).filter(models.Questions.id == question_id).first()
+async def read_question(question_id: int):
+    result =db.query(models.questions).filter(models.Questions.id == question_id).first()
     if not result:
         raise HTTPException(status_code=404, detail='Question is not found')
     return result
 
 @app.get("/choices/{question_id}")
-async def read_choices(question_id:int, db:db_dependency):
-    result = db.query(models.Choices).filter(models.Choices.question_id == question_id).all()
+async def read_choices(question_id:int):
+    result = db.query(models.choices).filter(models.choices.question_id == question_id).all()
     if not result:
         raise HTTPException(status_code=404, detail='Choices is not found')
     return result
     
 @app.post("/questions/")
-async def create_questions(question: QuestionBase, db: db_dependency):
+async def create_questions(question: QuestionBase):
     db_question = models.Questions(question_text=question.question_text)
     db.add(db_question)
     db.commit()

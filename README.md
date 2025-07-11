@@ -21,49 +21,58 @@ clone the repository using git bash
 we have to install the necessary libraries for backend login dependencies.
 Install the testing tools and configure package Json.
 
-A repository to implement the login or signup backend end-point for project Eins
-Implements basic user authentication using python, FastApi
-The frontend wil be ReactJS code
-The database  will be in PostgreSQL
-This issue implements a complete authentication flow using FastAPI and create the endpoints user signup, login, and logout, with session-based authentication via secure HTTP-only cookies. 
-The /signup endpoint allows a new user to register by providing a username and password through a form. The password is hashed using passlib with bcrypt to ensure secure storage.
- After registered, users can authenticate using the /login endpoint, where their credentials are verified against stored data.
- Upon successful authentication, a session cookie named session is set in the user's browser to maintain login state.
- This cookie is marked as HTTP-only to prevent client-side access and protect against XSS attacks.
- The /logout endpoint handles session termination by deleting the session cookie, ensuring the user is logged out.
- Protected routes  are secured using FastAPI's dependency  which checks the validity of the session cookie before granting access. 
- we have to create the code in fastapi main.py and connected to the database using PostgreSQL
- It returns the current logged-in user information and here the explanation for login and logout process
 
-Design and documentation for Login process
+## Design and documentation for Login process
        1.The login functionality in this FastAPI application is implemented using a secure and lightweight session-based authentication system.
+
        2.Users submit their login credentials—username and password—through a POST request to the /login endpoint.
-       3.To create a new user and password in fastapi Json response we have to install password hasher passlib[bcrypt]
-       4.bcrypt is a secure, slow hashing algorithm designed specifically for passwords and strong password hashing algorithm and it is mostly used for signup and login for verifying passwords
+
+       3.To create a new user and password in fastapi Json response we have to install password hasher passlib[bcrypt], bcrypt is a secure, slow hashing algorithm designed specifically for passwords and strong password hashing algorithm and it is mostly used for signup and login for verifying passwords
+
        5.we have to code for signup endpoint in main.py and create the example like this curl -X POST -F "username=ragavi" -F "password=mysecret" http://localhost:8000/signup
+
        6.After we use Swagger UI to test it and run the app uvicorn main:app --reload
+
        7.To open and visit http://localhost:8000/docs and try the signup endpoint with a username and password
+
        8.you can get the database using PostgreSQL
+
        9. The backend will receives the login request and check if user already exist in the database
+
        10.To protect a website after login we create the session cookie and protect from javascript xss 
+
        11.This cookie will be stored in the browser and sent automatically  with every request
+
        12.Use a dependency to check session cookie and after creating the dependency can be added to any protected route
+
        13.The @app.get("/dashboard") this ensures that only logged in users can access dashboard
+
        14. If login is successful, the server sets a secure HTTP-only cookie (session) containing the username. 
+
        15..This cookie is used to identify the authenticated user in subsequent requests to protected routes.
-       16.. The use of HTTP-only cookies enhances security by preventing client-side JavaScript access, thereby reducing the risk of XSS attacks.
-       17.XSS Stands for Cross Site Scripting and It is a type of security vulnerability where an attacker injects malicious JavaScript into a trusted website or web application. This script then runs in the browser of other users who visit that site.
-       18.It is a client side attack often targets cookies, forms and user data
+
+       16.. The use of HTTP-only cookies enhances security by preventing client-side JavaScript access, thereby reducing the risk of XSS attacks. XSS Stands for Cross Site Scripting and It is a type of security vulnerability where an attacker injects malicious JavaScript into a trusted website or web application. This script then runs in the browser of other users who visit that site. It is a client side attack often targets cookies, forms and user data
+
        19.The login design ensures that only valid users can initiate authenticated sessions, and integrates cleanly with frontend clients using the credentials include option in requests.
+
        20.It will return the successful  response
 
-Design and documentation for logout process
+## Design and documentation for logout process
        1.The logout functionality in this FastAPI application is designed to securely terminate a user’s authenticated session and logout to delete the session cookie
+
        2. If the user clicks a logout button on the frontend it sends a POST request to the logout endpoint. 
+
        3. Authentication is verified using a dependency that checks the presence of a valid session cookie.
+
        4. If the session is valid, the server clears the authentication cookie using response.delete_cookie("session"), effectively logging the user out.
+
        5.If no session cookie is found or is invalid it returns 401 unauthorized
-       6.The 401 unauthorized defines the user is not logged in or user's session is missing,expired or invaid
+
+       6.The 401 unauthorized defines the user is not logged in or user's session is missing,expired or invalid
+
        7.To fix the 401 error login first and store the session    
+
        8.By removing the session cookie from the client’s browser, any subsequent access to protected endpoints will be denied until the user logs in again and logging the user out
-       9`.After deleting the cookie  return a successful response message
+
+       9.After deleting the cookie  return a successful response message
+
