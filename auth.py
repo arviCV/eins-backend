@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Response, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette import status
@@ -88,3 +88,9 @@ async def get_current_user(token: Annotated[str, Depends(Oauth2_bearer)]):
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Could not validate user.')
+
+                            
+@router.post("/logout", status_code=status.HTTP_200_OK)
+async def logout(response: Response):
+    response.delete_cookie("access_token")
+    return {"message": "Logged out"}
