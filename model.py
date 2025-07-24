@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from database import Base
+
 
 class Users(Base):
     __tablename__ = 'users'
@@ -8,3 +9,17 @@ class Users(Base):
     username = Column(String, unique=True)
     hashed_password = Column(String)
  
+
+class Questions(Base):
+    __tablename__ = 'questions'
+
+    id = Column(Integer, primary_key=True, index=True)
+    question_text = Column(String, index=True)
+    
+class choices(Base):
+    __tablename__ = 'choices'
+
+    id = Column(Integer, primary_key=True, index=True)
+    choice_text = Column(String, index=True)
+    is_correct = Column(Boolean, default=False)
+    questions_id = Column(Integer, ForeignKey("questions.id"))
