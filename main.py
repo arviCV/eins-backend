@@ -41,16 +41,16 @@ class QuestionBase(BaseModel):
     choices:List[ChoiceBase]
 
 
-@app.get("/questions/{question_id}")
-async def read_question(question_id: int, db: db_dependency, user: user_dependency):
-    result =db.query(model.Questions).filter(model.Questions.id == question_id).first()
+@app.get("/questions/{questions_id}")
+async def read_question(questions_id: int, db: db_dependency, user: user_dependency):
+    result =db.query(model.Questions).filter(model.Questions.id == questions_id).first()
     if not result:
         raise HTTPException(status_code=404, detail='Question is not found')
     return result
 
-@app.get("/choices/{question_id}")
-async def read_choices(question_id:int, db: db_dependency, user: user_dependency):
-    result = db.query(model.choices).filter(model.choices.questions_id == question_id).all()
+@app.get("/choices/{questions_id}")
+async def read_choices(questions_id:int, db: db_dependency, user: user_dependency):
+    result = db.query(model.Choices).filter(model.Choices.questions_id == questions_id).all()
     if not result:
         raise HTTPException(status_code=404, detail='choices is not found')
     return result
@@ -62,6 +62,6 @@ async def create_questions(question: QuestionBase, db: db_dependency, user: user
     db.commit()
     db.refresh(db_question) 
     for choice in question.choices:
-        db_choice = model.choices(choice_text=choice.choice_text, is_correct=choice.is_correct, question_id=db_question.id)
+        db_choice = model.Choices(choice_text=choice.choice_text, is_correct=choice.is_correct, questions_id=db_question.id)
         db.add(db_choice)
     db.commit()
