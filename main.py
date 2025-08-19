@@ -6,12 +6,15 @@ from typing import List, Annotated
 from sqlalchemy.orm import Session
 import auth
 from auth import get_current_user
+from auth import get_admin_dashboard
+from fastapi import FastAPI
 
 
 app = FastAPI()
 app.include_router(auth.router)
+app.get("/admin/data")(get_admin_dashboard)
+model.Base.metadata.create_all(bind=engine)    
 
-model.Base.metadata.create_all(bind=engine)
 
 def get_db():
     db = SessionLocal()
@@ -41,6 +44,12 @@ class QuestionBase(BaseModel):
     choices:List[ChoiceBase]
 
 
+class UserRequestBase(BaseModel):
+    username: str
+    password: str
+    role: str
+
+
 @app.get("/questions/{questions_id}")
 async def read_question(questions_id: int, db: db_dependency, user: user_dependency):
     result =db.query(model.Questions).filter(model.Questions.id == questions_id).first()
@@ -65,3 +74,36 @@ async def create_questions(question: QuestionBase, db: db_dependency, user: user
         db_choice = model.Choices(choice_text=choice.choice_text, is_correct=choice.is_correct, questions_id=db_question.id)
         db.add(db_choice)
     db.commit()
+
+
+# main.py
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+import models, schema
+from database import engine, SessionLocal
+
+models.Base.metadata.create_all(bind=engine)
+
+app = FastAPI()
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.post("/users/", response_model=schema.UserRequestResponse)
+def create_user(user: schema.UserRequestCreate, db: Session = Depends(get_db)):
+    db_user = models.UserRequest(
+        username=user.username,
+        password=user.password,
+        role=user.role
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
