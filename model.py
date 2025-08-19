@@ -8,7 +8,8 @@ class Users(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True)
     hashed_password = Column(String)
- 
+    role = Column(String)
+
 
 class Questions(Base):
     __tablename__ = 'questions'
@@ -23,3 +24,12 @@ class Choices(Base):
     choice_text = Column(String, index=True)
     is_correct = Column(Boolean, default=False)
     questions_id = Column(Integer, ForeignKey("questions.id"))
+
+
+class UserRequest(Base):
+    __tablename__ = "user_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    password = Column(String)
+    role = Column(String)
